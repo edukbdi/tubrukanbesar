@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hipotesis Tubrukan Besar: Asal-Usul Bulan — KBDI</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ── TOKENS ── */
+  :root {
+    --bg:        #07080f;
+    --bg2:       #0d0f1c;
+    --bg3:       #141628;
+    --surface:   #111326;
+    --border:    rgba(168,158,248,0.15);
+    --text:      #e2dff5;
+    --text2:     #9490b8;
+    --accent:    #a89ef8;
+    --accent2:   #60c8f0;
+    --accent3:   #f5c842;
+    --accent4:   #e07a5f;
+    --heading:   #f0eeff;
+    --card-bg:   rgba(17,19,38,0.85);
+    --glow:      0 0 32px rgba(168,158,248,0.14);
+  }
+  html.light {
+    --bg:        #f2f0fb;
+    --bg2:       #e8e4f8;
+    --bg3:       #ddd8f5;
+    --surface:   #ffffff;
+    --border:    rgba(91,77,224,0.18);
+    --text:      #1a1630;
+    --text2:     #5a5480;
+    --accent:    #5b4de0;
+    --accent2:   #0284c7;
+    --accent3:   #b8860b;
+    --accent4:   #c4501e;
+    --heading:   #0f0c28;
+    --card-bg:   rgba(255,255,255,0.92);
+    --glow:      0 4px 24px rgba(91,77,224,0.1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+    transition: background 0.4s, color 0.4s;
+    overflow-x: hidden;
+  }
+
+  /* ── CANVAS ── */
+  #space-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.65;
+  }
+  html.light #space-canvas { opacity: 0.35; }
+
+  /* ── LAYOUT ── */
+  .page-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px 100px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 76px 0 44px;
+    text-align: center;
+    position: relative;
+  }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(168,158,248,0.1);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 18px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.9rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--heading);
+    line-height: 1.22;
+    margin-bottom: 16px;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-sub {
+    font-family: 'Lora', serif;
+    font-size: 1.05rem;
+    color: var(--text2);
+    font-style: italic;
+    max-width: 540px;
+    margin: 0 auto 28px;
+    line-height: 1.7;
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 12px;
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 6px; }
+  .hero-source {
+    font-size: 11px;
+    color: var(--text2);
+    opacity: 0.55;
+    letter-spacing: 0.04em;
+    margin-top: 16px;
+  }
+
+  /* ── ORBIT DIVIDER ── */
+  .orbit-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 36px 0;
+  }
+  .orbit-divider::before, .orbit-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+  .orbit-divider-icon {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(168,158,248,0.1);
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    font-size: 15px;
+  }
+
+  /* ── INTRO BOX ── */
+  .intro-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+    backdrop-filter: blur(8px);
+    box-shadow: var(--glow);
+  }
+  .intro-box p {
+    font-family: 'Lora', serif;
+    font-size: 1.05rem;
+    line-height: 1.85;
+  }
+
+  /* ── HEADINGS ── */
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    font-weight: 700;
+    color: var(--heading);
+    margin: 52px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  h2 .icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; flex-shrink: 0;
+  }
+  h2 .icon.purple { background: rgba(168,158,248,0.15); }
+  h2 .icon.blue   { background: rgba(96,200,240,0.15); }
+  h2 .icon.amber  { background: rgba(245,200,66,0.15); }
+  h2 .icon.coral  { background: rgba(224,122,95,0.15); }
+
+  p { color: var(--text); margin-bottom: 18px; line-height: 1.85; }
+  strong { color: var(--heading); }
+  sup { font-size: 0.75em; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin: 20px 0;
+    backdrop-filter: blur(6px);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .card:hover { border-color: var(--accent); box-shadow: var(--glow); }
+
+  /* ── CALLOUT ── */
+  .callout {
+    background: linear-gradient(135deg, rgba(168,158,248,0.07), rgba(96,200,240,0.05));
+    border: 1px solid rgba(168,158,248,0.22);
+    border-radius: 14px;
+    padding: 26px 28px;
+    margin: 28px 0;
+  }
+  html.light .callout {
+    background: linear-gradient(135deg, rgba(91,77,224,0.05), rgba(2,132,199,0.04));
+    border-color: rgba(91,77,224,0.18);
+  }
+  .callout-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .callout ul { padding-left: 18px; }
+  .callout ul li { margin-bottom: 8px; font-size: 15px; color: var(--text); }
+
+  /* ── PULL QUOTE ── */
+  .pull-quote {
+    border-left: 3px solid var(--accent);
+    padding: 16px 24px;
+    margin: 36px 0;
+    background: var(--card-bg);
+    border-radius: 0 10px 10px 0;
+    backdrop-filter: blur(6px);
+  }
+  .pull-quote p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    line-height: 1.5;
+    margin: 0;
+    color: var(--heading);
+  }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; margin: 28px 0; padding-left: 28px; }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 6px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    opacity: 0.4;
+  }
+  .tl-item { position: relative; margin-bottom: 26px; }
+  .tl-item::before {
+    content: '';
+    position: absolute; left: -25px; top: 7px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 8px rgba(168,158,248,0.5);
+  }
+  .tl-year {
+    font-size: 11px; font-weight: 700;
+    color: var(--accent); letter-spacing: 0.08em;
+    margin-bottom: 4px; text-transform: uppercase;
+  }
+  .tl-text { font-size: 15px; line-height: 1.7; color: var(--text); }
+  .tl-text strong { color: var(--heading); }
+
+  /* ── HYPO GRID ── */
+  .hypo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 14px; margin: 24px 0;
+  }
+  .hypo-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    backdrop-filter: blur(6px);
+    transition: border-color 0.3s;
+  }
+  .hypo-card.main-hypo { border-color: var(--accent); background: rgba(168,158,248,0.07); }
+  .hypo-card:hover { border-color: var(--accent); }
+  .hypo-card-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: var(--accent); margin-bottom: 8px;
+  }
+  .hypo-card-body { font-size: 14px; line-height: 1.65; color: var(--text2); }
+  .badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    border-radius: 4px; padding: 2px 8px; margin-top: 8px;
+  }
+  .badge-strong { background: rgba(168,158,248,0.15); color: var(--accent); }
+  .badge-weak   { background: rgba(224,122,95,0.15);  color: var(--accent4); }
+
+  /* ── ILLUSTRATION ── */
+  .illustration-wrap {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 8px; margin: 36px 0;
+    overflow: hidden;
+    backdrop-filter: blur(6px);
+  }
+  .illustration-caption {
+    font-size: 12px; color: var(--text2);
+    text-align: center;
+    padding: 10px 16px 6px; line-height: 1.5;
+  }
+
+  /* SVG theme classes */
+  html:not(.light) .svg-stage-bg    { fill: #141628 !important; stroke: rgba(168,158,248,0.1) !important; }
+  html:not(.light) .svg-stage-label { fill: #e2dff5 !important; }
+  html:not(.light) .svg-earth-text  { fill: #85B7EB !important; }
+  html:not(.light) .svg-moon-text   { fill: #B4B2A9 !important; }
+  html:not(.light) .svg-debris-text { fill: #FAC775 !important; }
+  html:not(.light) .svg-coral-text  { fill: #F0997B !important; }
+  html:not(.light) .svg-muted-text  { fill: #9490b8 !important; }
+  html:not(.light) .svg-note-text   { fill: #60c8f0 !important; }
+  html.light .svg-stage-bg    { fill: #eeeaf8 !important; stroke: rgba(91,77,224,0.1) !important; }
+  html.light .svg-stage-label { fill: #1a1630 !important; }
+  html.light .svg-earth-text  { fill: #0C447C !important; }
+  html.light .svg-moon-text   { fill: #444441 !important; }
+  html.light .svg-debris-text { fill: #633806 !important; }
+  html.light .svg-coral-text  { fill: #712B13 !important; }
+  html.light .svg-muted-text  { fill: #5a5480 !important; }
+  html.light .svg-note-text   { fill: #0284c7 !important; }
+
+  /* ── SOURCES ── */
+  .sources { margin-top: 60px; padding-top: 28px; border-top: 1px solid var(--border); }
+  .sources-title {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text2); margin-bottom: 16px;
+  }
+  .source-list { list-style: none; padding: 0; }
+  .source-list li {
+    display: flex; gap: 12px; align-items: flex-start;
+    font-size: 13px; color: var(--text2);
+    line-height: 1.6; margin-bottom: 10px;
+  }
+  .source-num {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: rgba(168,158,248,0.12);
+    color: var(--accent);
+    font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .source-list a { color: var(--accent); text-decoration: none; }
+  .source-list a:hover { text-decoration: underline; }
+
+  /* ── DARK MODE NOTICE ── */
+  .dark-notice {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: rgba(168,158,248,0.08);
+    border: 1px solid rgba(168,158,248,0.2);
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin: 0 0 0;
+    font-size: 13px;
+    color: var(--text2);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.5;
+  }
+  html.light .dark-notice { display: flex; }
+  .dark-notice-icon { font-size: 15px; flex-shrink: 0; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .page-wrapper { padding: 0 16px 80px; }
+    .hero { padding: 56px 0 32px; }
+    .hypo-grid { grid-template-columns: 1fr; }
+    h2 { font-size: 1.25rem; }
+    body { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Space canvas background -->
+<canvas id="space-canvas"></canvas>
+
+<div class="page-wrapper">
+
+  <!-- DARK MODE NOTICE -->
+  <div class="dark-notice">
+    <span class="dark-notice-icon">🌑</span>
+    <span>Artikel ini dirancang untuk dinikmati dalam mode gelap. Untuk pengalaman terbaik, aktifkan mode gelap melalui tombol di pojok kanan atas.</span>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">🌑 Kosmologi &amp; Sains Planet</div>
+    <h1>Hipotesis <em>Tubrukan Besar</em>:<br>Bagaimana Bulan Terbentuk</h1>
+    <p class="hero-sub">Sebuah protoplanet seukuran Mars menghantam Bumi muda 4,5 miliar tahun lalu — dan puing-puing dari kekacauan itu menjadi satelit yang menerangi malam kita.</p>
+    <div class="hero-meta">
+      <span>🪐 Kosmologi</span>
+      <span>·</span>
+      <span>📖 Bacaan ±7 menit</span>
+      <span>·</span>
+      <span>✔ Peer-reviewed</span>
+    </div>
+    <div class="hero-source">Berdasarkan: NASA · Nature · Science · Annual Review of Earth and Planetary Sciences</div>
+  </div>
+
+  <div class="orbit-divider"><div class="orbit-divider-icon">◎</div></div>
+
+  <!-- INTRO -->
+  <div class="intro-box">
+    <p>Bulan adalah benda langit yang paling dekat dengan Bumi, namun asal-usulnya lama menjadi teka-teki ilmu pengetahuan. Mengapa Bulan begitu besar dibandingkan planet induknya? Mengapa inti besinya sangat kecil, sementara Bumi memiliki inti besi yang masif? Mengapa komposisi isotop batuan Bulan nyaris identik dengan batuan Bumi? Semua pertanyaan ini akhirnya mendapat jawaban paling koheren dalam satu hipotesis: <strong>Hipotesis Tubrukan Besar</strong> (<em>Giant Impact Hypothesis</em>).</p>
+  </div>
+
+  <!-- ILUSTRASI -->
+  <div class="illustration-wrap">
+    <svg width="100%" viewBox="0 0 680 820" role="img" xmlns="http://www.w3.org/2000/svg">
+      <title>Ilustrasi Hipotesis Tubrukan Besar</title>
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <style>
+        .svgth { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; font-weight: 700; }
+        .svgts { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; font-weight: 400; }
+      </style>
+      <!-- STAGE 1 -->
+      <rect x="24" y="20" width="632" height="160" rx="10" class="svg-stage-bg" fill="#141628" stroke="rgba(168,158,248,0.1)" stroke-width="0.5"/>
+      <text x="44" y="48" class="svgth svg-stage-label" fill="#e2dff5">1. Sebelum tubrukan — ~4,5 miliar tahun lalu</text>
+      <circle cx="220" cy="110" r="52" fill="#378ADD" opacity="0.85"/>
+      <circle cx="200" cy="92" r="14" fill="#185FA5" opacity="0.5"/>
+      <circle cx="238" cy="128" r="9" fill="#185FA5" opacity="0.4"/>
+      <text x="220" y="114" class="svgth" fill="white" text-anchor="middle">Proto-Earth</text>
+      <circle cx="480" cy="110" r="30" fill="#D85A30" opacity="0.85"/>
+      <circle cx="468" cy="100" r="8" fill="#993C1D" opacity="0.5"/>
+      <text x="480" y="114" class="svgth" fill="white" text-anchor="middle">Theia</text>
+      <line x1="444" y1="110" x2="282" y2="110" stroke="#D85A30" stroke-width="2" stroke-dasharray="6 3" marker-end="url(#arr)"/>
+      <text x="362" y="103" class="svgts svg-coral-text" fill="#F0997B" text-anchor="middle">mendekat dengan kecepatan tinggi</text>
+      <!-- STAGE 2 -->
+      <rect x="24" y="198" width="632" height="170" rx="10" class="svg-stage-bg" fill="#141628" stroke="rgba(168,158,248,0.1)" stroke-width="0.5"/>
+      <text x="44" y="226" class="svgth svg-stage-label" fill="#e2dff5">2. Saat tubrukan — benturan tangensial</text>
+      <ellipse cx="260" cy="293" rx="54" ry="48" fill="#185FA5" opacity="0.9"/>
+      <ellipse cx="260" cy="293" rx="38" ry="32" fill="#378ADD" opacity="0.85"/>
+      <ellipse cx="358" cy="268" rx="28" ry="22" fill="#993C1D" opacity="0.85"/>
+      <line x1="300" y1="270" x2="370" y2="210" stroke="#EF9F27" stroke-width="2.5" opacity="0.9"/>
+      <line x1="315" y1="265" x2="410" y2="225" stroke="#EF9F27" stroke-width="2" opacity="0.8"/>
+      <line x1="285" y1="260" x2="340" y2="200" stroke="#EF9F27" stroke-width="2" opacity="0.8"/>
+      <line x1="310" y1="280" x2="430" y2="260" stroke="#EF9F27" stroke-width="2.5" opacity="0.85"/>
+      <line x1="305" y1="295" x2="440" y2="310" stroke="#EF9F27" stroke-width="2" opacity="0.7"/>
+      <line x1="285" y1="305" x2="330" y2="350" stroke="#EF9F27" stroke-width="1.5" opacity="0.6"/>
+      <line x1="275" y1="260" x2="220" y2="210" stroke="#EF9F27" stroke-width="1.5" opacity="0.6"/>
+      <circle cx="390" cy="215" r="5" fill="#EF9F27" opacity="0.9"/>
+      <circle cx="420" cy="230" r="3" fill="#EF9F27" opacity="0.8"/>
+      <circle cx="440" cy="260" r="4" fill="#BA7517" opacity="0.85"/>
+      <circle cx="430" cy="308" r="5" fill="#EF9F27" opacity="0.75"/>
+      <circle cx="345" cy="200" r="4" fill="#EF9F27" opacity="0.8"/>
+      <circle cx="335" cy="348" r="4" fill="#EF9F27" opacity="0.7"/>
+      <text x="338" y="356" class="svgts svg-debris-text" fill="#FAC775">puing-puing silikat terlontar ke orbit</text>
+      <text x="148" y="306" class="svgts svg-muted-text" fill="#9490b8" text-anchor="middle">inti logam tenggelam ke Bumi</text>
+      <!-- STAGE 3 -->
+      <rect x="24" y="386" width="632" height="175" rx="10" class="svg-stage-bg" fill="#141628" stroke="rgba(168,158,248,0.1)" stroke-width="0.5"/>
+      <text x="44" y="414" class="svgth svg-stage-label" fill="#e2dff5">3. Akresi puing — disk material mengorbit</text>
+      <circle cx="180" cy="480" r="46" fill="#185FA5" opacity="0.9"/>
+      <circle cx="180" cy="480" r="32" fill="#378ADD" opacity="0.85"/>
+      <circle cx="180" cy="480" r="12" fill="#0C447C" opacity="0.9"/>
+      <ellipse cx="340" cy="480" rx="148" ry="46" fill="none" stroke="#EF9F27" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.7"/>
+      <circle cx="488" cy="480" r="18" fill="#BA7517" opacity="0.75"/>
+      <circle cx="488" cy="480" r="10" fill="#EF9F27" opacity="0.85"/>
+      <circle cx="350" cy="436" r="4" fill="#EF9F27" opacity="0.7"/>
+      <circle cx="400" cy="444" r="5" fill="#BA7517" opacity="0.65"/>
+      <circle cx="450" cy="453" r="3" fill="#EF9F27" opacity="0.7"/>
+      <circle cx="440" cy="510" r="4" fill="#BA7517" opacity="0.65"/>
+      <circle cx="380" cy="522" r="3" fill="#EF9F27" opacity="0.7"/>
+      <text x="488" y="510" class="svgts svg-debris-text" fill="#FAC775" text-anchor="middle">proto-Bulan terbentuk</text>
+      <text x="180" y="542" class="svgts svg-earth-text" fill="#85B7EB" text-anchor="middle">Bumi (inti besi utuh)</text>
+      <!-- STAGE 4 -->
+      <rect x="24" y="579" width="632" height="215" rx="10" class="svg-stage-bg" fill="#141628" stroke="rgba(168,158,248,0.1)" stroke-width="0.5"/>
+      <text x="44" y="607" class="svgth svg-stage-label" fill="#e2dff5">4. Bulan terbentuk — sistem stabil</text>
+      <circle cx="210" cy="700" r="54" fill="#185FA5" opacity="0.9"/>
+      <circle cx="210" cy="700" r="38" fill="#378ADD" opacity="0.85"/>
+      <ellipse cx="200" cy="685" rx="14" ry="10" fill="#1D9E75" opacity="0.7"/>
+      <ellipse cx="225" cy="715" rx="10" ry="7" fill="#1D9E75" opacity="0.6"/>
+      <circle cx="210" cy="700" r="14" fill="#0C447C" opacity="0.85"/>
+      <circle cx="500" cy="700" r="30" fill="#888780" opacity="0.85"/>
+      <circle cx="490" cy="692" r="6" fill="#5F5E5A" opacity="0.6"/>
+      <circle cx="510" cy="712" r="4" fill="#5F5E5A" opacity="0.5"/>
+      <line x1="270" y1="700" x2="465" y2="700" stroke="#888780" stroke-width="1" stroke-dasharray="5 3" opacity="0.6"/>
+      <text x="210" y="770" class="svgth svg-earth-text" fill="#85B7EB" text-anchor="middle">Bumi</text>
+      <text x="210" y="784" class="svgts svg-muted-text" fill="#9490b8" text-anchor="middle">inti besi besar</text>
+      <text x="500" y="745" class="svgth svg-moon-text" fill="#B4B2A9" text-anchor="middle">Bulan</text>
+      <text x="500" y="759" class="svgts svg-muted-text" fill="#9490b8" text-anchor="middle">inti kecil, miskin besi</text>
+      <text x="355" y="695" class="svgts svg-muted-text" fill="#9490b8" text-anchor="middle">orbit stabil</text>
+      <text x="44" y="784" class="svgts svg-note-text" fill="#60c8f0">★ Komposisi isotop Bumi dan Bulan sangat mirip — bukti asal-usul yang sama</text>
+    </svg>
+    <p class="illustration-caption">Ilustrasi 4 tahap Hipotesis Tubrukan Besar: dari pendekatan Theia hingga terbentuknya sistem Bumi–Bulan yang stabil.</p>
+  </div>
+
+  <!-- MEKANISME -->
+  <h2><span class="icon purple">💥</span>Bagaimana Tumbukan Itu Terjadi</h2>
+
+  <p>Pada masa awal tata surya, sekitar 4,5 miliar tahun lalu, sistem keplanetan kita masih kacau. Puluhan protoplanet saling berebut orbit. Dalam kondisi itulah sebuah protoplanet seukuran Mars — yang kini kita sebut <strong>Theia</strong>, dari nama dewi Titan dalam mitologi Yunani — memasuki orbit yang bersinggungan dengan orbit Bumi muda.</p>
+
+  <p>Tumbukan yang terjadi bukanlah tabrakan frontal, melainkan <em>benturan tangensial</em> (menyamping). Simulasi komputer modern menunjukkan bahwa skenario ini menghasilkan pola yang paling sesuai dengan kondisi Bulan saat ini: sebagian besar material Theia beserta lapisan luar Bumi terlontar ke orbit, sementara inti logam kedua benda bergabung di dalam Bumi.</p>
+
+  <div class="callout">
+    <div class="callout-title">🔬 Ringkasan Mekanisme</div>
+    <ul>
+      <li>Theia (~seukuran Mars) menabrak Bumi dengan sudut tangensial</li>
+      <li>Puing-puing kaya silikat terlontar ke orbit; zat volatil menguap</li>
+      <li>Inti logam Theia dan Bumi bergabung — memperbesar inti besi Bumi</li>
+      <li>Material di orbit mengalami akresi membentuk proto-Bulan yang awalnya cair</li>
+      <li>Bulan perlahan mendingin dan menjauh, hingga orbit stabil saat ini</li>
+    </ul>
+  </div>
+
+  <div class="pull-quote">
+    <p>"Bulan bukan sekadar batu di langit malam — ia adalah saksi bisu dari salah satu peristiwa paling kekerasan dalam sejarah tata surya kita."</p>
+  </div>
+
+  <!-- BUKTI -->
+  <h2><span class="icon blue">🔭</span>Mengapa Hipotesis Ini Paling Diterima?</h2>
+
+  <p>Hipotesis Tubrukan Besar unggul karena ia mampu menjelaskan sekaligus sejumlah anomali Bulan yang tidak dapat dijelaskan oleh satu teori lain pun secara bersamaan.</p>
+
+  <div class="card">
+    <strong>① Kesamaan isotop oksigen.</strong> Analisis sampel batuan yang dibawa misi Apollo (1969–1972) menunjukkan rasio isotop oksigen (<sup>16</sup>O/<sup>17</sup>O/<sup>18</sup>O) di batuan Bulan nyaris identik dengan batuan Bumi. Ini mengisyaratkan kedua benda terbentuk dari material di zona orbit yang sama. Jika Bulan benda asing yang terperangkap gravitasi Bumi, komposisi isotopnya seharusnya berbeda jauh.
+  </div>
+  <div class="card">
+    <strong>② Inti Bulan yang kecil dan miskin besi.</strong> Bulan hanya memiliki inti besi berdiameter sekitar 20% dari total diameternya. Hipotesis ini menjelaskannya secara elegan: material yang terlontar ke orbit didominasi lapisan mantel (kaya silikat), bukan inti besi — inti kedua benda sudah bergabung ke dalam Bumi.
+  </div>
+  <div class="card">
+    <strong>③ Keselarasan rotasi dan orbit.</strong> Momentum sudut sistem Bumi–Bulan konsisten dengan skenario tumbukan besar. Batuan Bulan juga menunjukkan tanda-tanda pernah berada dalam keadaan cair — mengonfirmasi fase lautan magma global pasca-tumbukan.
+  </div>
+  <div class="card">
+    <strong>④ Tumbukan serupa di sistem bintang lain.</strong> Observasi terhadap bintang muda lain mendeteksi disk puing di sekitar bintang — diduga hasil tumbukan besar antarprotoplanet. Ini menunjukkan mekanisme semacam ini adalah bagian normal pembentukan planet berbatu.
+  </div>
+
+  <!-- SEJARAH -->
+  <h2><span class="icon amber">📜</span>Sejarah Perkembangan Hipotesis</h2>
+
+  <p>Gagasan ini telah muncul jauh sebelum era eksplorasi luar angkasa, meski awalnya berbentuk berbeda.</p>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-year">1898</div>
+      <div class="tl-text"><strong>George Darwin</strong> (putra Charles Darwin) mengusulkan hipotesis fisi: Bulan terlepas dari Bumi yang berputar sangat cepat. Ia juga memperkirakan Bulan dulu lebih dekat ke Bumi dan terus menjauh — kelak dikonfirmasi eksperimen refleksi laser misi Apollo.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1946</div>
+      <div class="tl-text"><strong>Reginald Aldworth Daly</strong> mengusulkan bahwa Bulan terbentuk bukan karena gaya sentrifugal, melainkan akibat tumbukan besar. Hipotesis ini tidak mendapat sambutan luas — alat dan data untuk memvalidasinya belum tersedia.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1975</div>
+      <div class="tl-text"><strong>William K. Hartmann &amp; Donald R. Davis</strong> mempublikasikan model tumbukan besar secara kuantitatif. Secara bersamaan, <strong>Alastair G. W. Cameron &amp; William R. Ward</strong> mengembangkan model serupa yang menekankan momentum sudut sebagai kunci.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1984</div>
+      <div class="tl-text"><strong>Konferensi Kona, Hawaii</strong> menjadi titik balik. Dari sini Hipotesis Tubrukan Besar muncul sebagai konsensus ilmiah dominan yang bertahan hingga hari ini.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">2000-an – kini</div>
+      <div class="tl-text">Simulasi <em>smoothed-particle hydrodynamics</em> (SPH) terus memperhalus model: variasi sudut impak, massa Theia, dan kemungkinan bahwa Theia terbentuk di zona orbit yang sama dengan Bumi — menjelaskan kesamaan komposisi isotop.</div>
+    </div>
+  </div>
+
+  <!-- HIPOTESIS PESAING -->
+  <h2><span class="icon coral">⚖️</span>Hipotesis-Hipotesis Pesaing</h2>
+
+  <div class="hypo-grid">
+    <div class="hypo-card main-hypo">
+      <div class="hypo-card-title">★ Hipotesis Tubrukan Besar</div>
+      <div class="hypo-card-body">Theia menabrak Bumi; puing-puing membentuk Bulan. Menjelaskan inti kecil Bulan, kesamaan isotop, dan orbit stabil sekaligus.</div>
+      <span class="badge badge-strong">konsensus ilmiah</span>
+    </div>
+    <div class="hypo-card">
+      <div class="hypo-card-title">Hipotesis Tangkap</div>
+      <div class="hypo-card-body">Bulan terbentuk di tempat lain lalu tertangkap gravitasi Bumi. Lemah: kesamaan isotop dan orbit melingkar nyaris sempurna tidak sesuai pola tangkap gravitasi.</div>
+      <span class="badge badge-weak">tidak konsisten data</span>
+    </div>
+    <div class="hypo-card">
+      <div class="hypo-card-title">Hipotesis Fisi</div>
+      <div class="hypo-card-body">Bumi berputar sangat cepat melemparkan material. Lemah: energi rotasi tidak realistis; tidak menjelaskan inti Bulan yang kecil.</div>
+      <span class="badge badge-weak">energi tidak realistis</span>
+    </div>
+    <div class="hypo-card">
+      <div class="hypo-card-title">Hipotesis Akresi Bersama</div>
+      <div class="hypo-card-body">Bumi dan Bulan terbentuk bersamaan dari nebula yang sama. Lemah: tidak menjelaskan perbedaan kepadatan dan ukuran inti.</div>
+      <span class="badge badge-weak">inkonsistensi komposisi</span>
+    </div>
+    <div class="hypo-card">
+      <div class="hypo-card-title">Hipotesis Ledakan Nuklir</div>
+      <div class="hypo-card-body">Ledakan nuklir alami di dalam Bumi melontarkan material. Spekulatif; tidak ada bukti geologis; energi jauh melebihi kapasitas reaksi nuklir alami.</div>
+      <span class="badge badge-weak">spekulatif tanpa bukti</span>
+    </div>
+  </div>
+
+  <div class="orbit-divider"><div class="orbit-divider-icon">◎</div></div>
+
+  <!-- PENUTUP -->
+  <h2><span class="icon purple">🌙</span>Catatan Penutup</h2>
+
+  <p>Meski Hipotesis Tubrukan Besar adalah penjelasan paling kuat saat ini, ia bukan tanpa pertanyaan terbuka. Jika Theia adalah benda asing dari bagian lain tata surya, mengapa komposisi isotopnya hampir identik dengan Bumi? Beberapa peneliti mengusulkan Theia mungkin terbentuk di zona orbit yang sama, sehingga berbagi "sidik jari" isotop yang serupa.</p>
+
+  <p>Simulasi SPH terus dijalankan untuk menguji berbagai skenario. Ilmu pengetahuan tidak pernah benar-benar selesai — dan itulah yang membuatnya menarik. Yang pasti: setiap kali kita memandang Bulan, kita sedang melihat artefak dari salah satu peristiwa paling kekerasan dan paling formatif dalam sejarah planet kita.</p>
+
+  <!-- SUMBER -->
+  <div class="sources">
+    <div class="sources-title">Referensi</div>
+    <ul class="source-list">
+      <li><span class="source-num">1</span><div>Hartmann, W.K. &amp; Davis, D.R. (1975). "Satellite-Sized Planetesimals and Lunar Origin." <em>Icarus</em>, 24(4), 504–515.</div></li>
+      <li><span class="source-num">2</span><div>Cameron, A.G.W. &amp; Ward, W.R. (1976). "The Origin of the Moon." <em>Lunar Science Conference</em>, 7.</div></li>
+      <li><span class="source-num">3</span><div>Canup, R.M. &amp; Asphaug, E. (2001). "Origin of the Moon in a giant impact near the end of the Earth's formation." <em>Nature</em>, 412, 708–712. <a href="https://doi.org/10.1038/35089010" target="_blank" rel="noopener">doi:10.1038/35089010</a></div></li>
+      <li><span class="source-num">4</span><div>Canup, R.M. (2012). "Forming a Moon with an Earth-like Composition via a Giant Impact." <em>Science</em>, 338(6110), 1052–1055. <a href="https://doi.org/10.1126/science.1226073" target="_blank" rel="noopener">doi:10.1126/science.1226073</a></div></li>
+      <li><span class="source-num">5</span><div>Asphaug, E. (2014). "Impact Origin of the Moon?" <em>Annual Review of Earth and Planetary Sciences</em>, 42, 551–578.</div></li>
+      <li><span class="source-num">6</span><div>Melosh, H.J. (2009). <em>Planetary Surface Processes</em>. Cambridge University Press.</div></li>
+      <li><span class="source-num">7</span><div>NASA — "Origin of the Moon." <a href="https://science.nasa.gov/moon/lunar-origin/" target="_blank" rel="noopener">science.nasa.gov</a></div></li>
+    </ul>
+  </div>
+
+</div><!-- /page-wrapper -->
+
+<!-- KBDI Script -->
+<script>
+  const savedTheme = localStorage.getItem('kbdi-theme');
+  if (savedTheme === 'light') document.documentElement.classList.add('light');
+
+  fetch('https://edukbdi.github.io/header.html')
+    .then(r => r.text())
+    .then(html => {
+      document.body.insertAdjacentHTML('afterbegin', html);
+      const header = document.getElementById('kbdi-header');
+      if (savedTheme === 'light') header.classList.add('kbdi-light');
+      document.getElementById('kbdiThemeToggle').addEventListener('click', function() {
+        const isLight = document.documentElement.classList.toggle('light');
+        header.classList.toggle('kbdi-light', isLight);
+        localStorage.setItem('kbdi-theme', isLight ? 'light' : 'dark');
+        const footer = document.getElementById('kbdi-footer');
+        if (footer) footer.classList.toggle('kbdi-light', isLight);
+      });
+    });
+
+  fetch('https://edukbdi.github.io/footer.html')
+    .then(r => r.text())
+    .then(html => {
+      document.body.insertAdjacentHTML('beforeend', html);
+      const footer = document.getElementById('kbdi-footer');
+      if (footer && savedTheme === 'light') footer.classList.add('kbdi-light');
+    });
+</script>
+
+<!-- Space Canvas Animation -->
+<script>
+(function() {
+  const canvas = document.getElementById('space-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  const isDark = () => !document.documentElement.classList.contains('light');
+
+  // ── Stars ──
+  class Star {
+    constructor() { this.reset(true); }
+    reset(init) {
+      this.x = Math.random() * W;
+      this.y = init ? Math.random() * H : Math.random() * H;
+      this.r = 0.4 + Math.random() * 1.6;
+      this.baseAlpha = 0.3 + Math.random() * 0.65;
+      this.twinkleSpeed = 0.008 + Math.random() * 0.02;
+      this.twinkleOffset = Math.random() * Math.PI * 2;
+      this.color = Math.random() < 0.12 ? 'amber' : Math.random() < 0.08 ? 'blue' : 'white';
+    }
+    draw(t) {
+      const alpha = this.baseAlpha * (0.6 + 0.4 * Math.sin(t * this.twinkleSpeed + this.twinkleOffset));
+      let c;
+      if (isDark()) {
+        if (this.color === 'amber') c = `rgba(245,200,100,${alpha})`;
+        else if (this.color === 'blue') c = `rgba(150,210,255,${alpha})`;
+        else c = `rgba(255,255,255,${alpha})`;
+      } else {
+        if (this.color === 'amber') c = `rgba(140,90,0,${alpha * 0.55})`;
+        else if (this.color === 'blue') c = `rgba(20,80,180,${alpha * 0.55})`;
+        else c = `rgba(60,50,140,${alpha * 0.5})`;
+      }
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = c;
+      ctx.fill();
+    }
+  }
+
+  // ── Shooting Star ──
+  class ShootingStar {
+    constructor() { this.reset(); }
+    reset() {
+      this.active = false;
+      this.timer = 120 + Math.random() * 400;
+    }
+    activate() {
+      this.active = true;
+      this.x = Math.random() * W * 0.8;
+      this.y = Math.random() * H * 0.4;
+      this.vx = 4 + Math.random() * 5;
+      this.vy = 1.5 + Math.random() * 3;
+      this.len = 80 + Math.random() * 100;
+      this.life = 0;
+      this.maxLife = 40 + Math.random() * 20;
+    }
+    update() {
+      if (!this.active) {
+        this.timer--;
+        if (this.timer <= 0) this.activate();
+        return;
+      }
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life++;
+      if (this.life > this.maxLife) this.reset();
+    }
+    draw() {
+      if (!this.active) return;
+      const alpha = (1 - this.life / this.maxLife) * 0.85;
+      const trailColor  = isDark() ? `rgba(220,210,255,${alpha})` : `rgba(80,60,200,${alpha * 0.6})`;
+      const trailStart  = isDark() ? `rgba(255,255,255,0)`        : `rgba(80,60,200,0)`;
+      const tipColor    = isDark() ? `rgba(255,255,255,${alpha})`  : `rgba(60,40,180,${alpha * 0.7})`;
+      const grad = ctx.createLinearGradient(
+        this.x - this.vx * 10, this.y - this.vy * 10,
+        this.x, this.y
+      );
+      grad.addColorStop(0, trailStart);
+      grad.addColorStop(1, trailColor);
+      ctx.beginPath();
+      ctx.moveTo(this.x - this.vx * 10, this.y - this.vy * 10);
+      ctx.lineTo(this.x, this.y);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      // tip glow
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = tipColor;
+      ctx.fill();
+    }
+  }
+
+  // ── Asteroid / Debris ──
+  class Asteroid {
+    constructor() { this.reset(true); }
+    reset(init) {
+      this.x = Math.random() * W;
+      this.y = init ? Math.random() * H : -10;
+      this.r = 1.5 + Math.random() * 3;
+      this.vx = (Math.random() - 0.5) * 0.3;
+      this.vy = 0.15 + Math.random() * 0.35;
+      this.rot = Math.random() * Math.PI * 2;
+      this.rotSpeed = (Math.random() - 0.5) * 0.04;
+      this.alpha = 0.3 + Math.random() * 0.5;
+      this.sides = 5 + Math.floor(Math.random() * 4); // irregular polygon
+      this.offsets = Array.from({length: this.sides}, () => 0.7 + Math.random() * 0.5);
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.rot += this.rotSpeed;
+      if (this.y > H + 20) this.reset(false);
+    }
+    draw() {
+      const c = isDark()
+        ? `rgba(200,190,255,${this.alpha * 0.6})`
+        : `rgba(80,70,160,${this.alpha * 0.4})`;
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rot);
+      ctx.beginPath();
+      for (let i = 0; i < this.sides; i++) {
+        const angle = (Math.PI * 2 / this.sides) * i;
+        const rr = this.r * this.offsets[i];
+        const px = Math.cos(angle) * rr;
+        const py = Math.sin(angle) * rr;
+        if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fillStyle = c;
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // ── Orbit Ring ──
+  class OrbitRing {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H;
+      this.rx = 30 + Math.random() * 80;
+      this.ry = this.rx * (0.25 + Math.random() * 0.35);
+      this.tilt = Math.random() * Math.PI;
+      this.life = 0;
+      this.maxLife = 200 + Math.random() * 300;
+      this.delay = Math.random() * 80;
+      this.dotAngle = Math.random() * Math.PI * 2;
+      this.dotSpeed = (Math.random() > 0.5 ? 1 : -1) * (0.012 + Math.random() * 0.016);
+    }
+    update() {
+      this.life++;
+      this.dotAngle += this.dotSpeed;
+      if (this.life > this.maxLife + this.delay) this.reset();
+    }
+    draw() {
+      if (this.life < this.delay) return;
+      const t = (this.life - this.delay) / this.maxLife;
+      const alpha = Math.sin(t * Math.PI) * 0.18;
+      const c = isDark()
+        ? `rgba(168,158,248,${alpha})`
+        : `rgba(91,77,224,${alpha * 0.6})`;
+
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.tilt);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, this.rx, this.ry, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = c;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+
+      // Dot travelling the ring
+      const dotX = Math.cos(this.dotAngle) * this.rx;
+      const dotY = Math.sin(this.dotAngle) * this.ry;
+      const dotAlpha = Math.sin(t * Math.PI) * 0.7;
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = isDark()
+        ? `rgba(245,200,66,${dotAlpha})`
+        : `rgba(180,140,0,${dotAlpha * 0.7})`;
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // ── Nebula puff ──
+  class NebulaPuff {
+    constructor() { this.reset(true); }
+    reset(init) {
+      this.x = Math.random() * W;
+      this.y = init ? Math.random() * H : H + 60;
+      this.r = 40 + Math.random() * 100;
+      this.alpha = 0;
+      this.targetAlpha = 0.025 + Math.random() * 0.04;
+      this.life = 0;
+      this.maxLife = 400 + Math.random() * 600;
+      this.colorIdx = Math.floor(Math.random() * 3);
+      this.vy = -0.05 - Math.random() * 0.08;
+    }
+    update() {
+      this.life++;
+      this.y += this.vy;
+      const t = this.life / this.maxLife;
+      this.alpha = Math.sin(t * Math.PI) * this.targetAlpha;
+      if (this.life > this.maxLife) this.reset(false);
+    }
+    draw() {
+      const colors = isDark()
+        ? ['rgba(168,158,248,A)', 'rgba(96,200,240,A)', 'rgba(245,200,66,A)']
+        : ['rgba(100,80,200,A)',  'rgba(0,100,180,A)',  'rgba(160,110,0,A)'];
+      const alphaScale = isDark() ? 0.5 : 0.35;
+      const c = colors[this.colorIdx].replace('A', this.alpha * alphaScale);
+      const transparent = isDark() ? 'rgba(0,0,0,0)' : 'rgba(242,240,251,0)';
+      const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r);
+      grad.addColorStop(0, c);
+      grad.addColorStop(1, transparent);
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+  }
+
+  let stars, shootingStars, asteroids, orbitRings, nebulae;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function init() {
+    resize();
+    const nStars = Math.min(Math.floor(W * H / 4000), 280);
+    stars        = Array.from({length: nStars}, () => new Star());
+    shootingStars= [new ShootingStar(), new ShootingStar(), new ShootingStar()];
+    asteroids    = Array.from({length: 22}, () => new Asteroid());
+    orbitRings   = Array.from({length: 14}, () => new OrbitRing());
+    nebulae      = Array.from({length: 6},  () => new NebulaPuff());
+  }
+
+  let frame = 0;
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    frame++;
+
+    nebulae.forEach(n => { n.update(); n.draw(); });
+    orbitRings.forEach(o => { o.update(); o.draw(); });
+    stars.forEach(s => s.draw(frame));
+    asteroids.forEach(a => { a.update(); a.draw(); });
+    shootingStars.forEach(s => { s.update(); s.draw(); });
+
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize', () => { resize(); init(); });
+  init();
+  loop();
+})();
+</script>
+
+</body>
+</html>
